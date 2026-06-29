@@ -3,6 +3,7 @@ package net.jelly.chronicler;
 import com.mojang.logging.LogUtils;
 import net.jelly.chronicler.config.GroqConfig;
 import net.jelly.chronicler.config.OllamaConfig;
+import net.jelly.chronicler.network.ChroniclerPacketHandler;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -43,8 +44,7 @@ public class ChroniclerMod
     // common setup
     private void commonSetup(final FMLCommonSetupEvent event)
     {
-        event.enqueueWork(() -> {
-        });
+        event.enqueueWork(ChroniclerPacketHandler::register);
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

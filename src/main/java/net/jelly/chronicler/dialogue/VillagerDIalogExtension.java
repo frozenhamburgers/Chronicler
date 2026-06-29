@@ -3,8 +3,13 @@ package net.jelly.chronicler.dialogue;
 import com.jelly.dialog_lib.api.entity.EntityDialogueExtension;
 import com.jelly.dialog_lib.api.entity.IEntityDialogueExtension;
 import com.jelly.dialog_lib.client.screen.DialogueScreen;
+import com.jelly.dialog_lib.client.screen.TextInputDialogueScreen;
 import com.jelly.dialog_lib.client.screen.builder.StreamDialogueScreenBuilder;
 import net.jelly.chronicler.ChroniclerMod;
+import net.jelly.chronicler.network.ChroniclerPacketHandler;
+import net.jelly.chronicler.network.ChroniclerPacketRelay;
+import net.jelly.chronicler.network.packet.serverbound.SendTextInputPacket;
+import net.jelly.chronicler.network.packet.serverbound.TestPacket;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -19,7 +24,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 @EntityDialogueExtension(modId = ChroniclerMod.MODID)
-public class VillagerDIalogExtension implements IEntityDialogueExtension<Villager> {
+public class VillagerDialogExtension implements IEntityDialogueExtension<Villager> {
 
     @Override
     public EntityType<Villager> getEntityType() {
@@ -58,9 +63,58 @@ public class VillagerDIalogExtension implements IEntityDialogueExtension<Village
     @Override
     @OnlyIn(Dist.CLIENT)
     public DialogueScreen getDialogScreen(StreamDialogueScreenBuilder dialogueScreenBuilder, LocalPlayer localPlayer, Villager villager, CompoundTag serverData) {
-        dialogueScreenBuilder.start(Component.literal("Hello there"))
-                .addFinalOption(Component.literal("Hey man"), 1)
-                .addFinalOption(Component.literal("I hate you"), 2);
+        if(localPlayer.isCrouching()) {
+            dialogueScreenBuilder.start(Component.literal("I see you!"))
+                    .setLoopingTextInput(
+                            Component.literal("Identify yourself!"),
+                            Component.literal("Enter input..."),
+                            // when using LoopingTextInput, it makes most sense in this situation to entirely delegate the reply to the callback.
+                            (text, screen) -> {
+
+                                System.out.println("Client: Sending packet");
+                                screen.setBlocked(true);
+                                screen.setDialogueAnswer(Component.literal("..."));
+                                ChroniclerPacketRelay.sendToServer(new SendTextInputPacket(text));
+
+                                if(text.equals(localPlayer.getDisplayName().getString())) {
+                                    if (screen instanceof TextInputDialogueScreen tiScreen) {
+                                        tiScreen.breakLoop();
+                                    }
+                                }
+                            }
+                    )
+                    .addFinalOption(Component.literal("Goodbye"));
+        }
+        else {
+            dialogueScreenBuilder.start(Component.literal("Hello there"))
+                    .startWithTextInput(
+                            Component.literal("What is your name?"),
+                            Component.literal("Enter name..."),
+                            (text, screen) -> {
+                                screen.setDialogueAnswer(Component.literal("HUH?? I didn't hear that. My ears are failing me"));
+                            }
+                    )
+                    .addTextInputOption(
+                            Component.literal("Continue"),
+                            Component.literal("What was your name again??"),
+                            Component.literal("Enter name..."),
+                            (text, screen) -> {
+                                screen.setDialogueAnswer(Component.literal("You said: " + text));
+                            }
+                    )
+                    .addOption(Component.literal("Continue"), Component.literal("DONT INTERRUPT ME"))
+                    .addTextInputOption(
+                            Component.literal("Continue"),
+                            Component.literal("What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again?? What was your name again??\" What was your name again?? What was your name again?? What was your name again?? What was your name again??\" What was your name again?? What was your name again?? What was your name again?? What was your name again??\""),
+                            Component.literal("Enter name..."),
+                            (text, screen) -> {
+                                screen.setDialogueAnswer(Component.literal("You said: " + text));
+                            }
+                    )
+                    .addFinalOption(Component.literal("Goodbye"));
+        }
+
+
         return dialogueScreenBuilder.build();
     }
 
