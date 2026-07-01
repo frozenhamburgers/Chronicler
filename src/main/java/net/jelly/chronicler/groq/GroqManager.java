@@ -27,28 +27,28 @@ public class GroqManager {
     @SubscribeEvent
     public static void onServerStopping(ServerStoppingEvent event) {
         available = false;
-        LOGGER.info("[Groq] Shutting down.");
+        LOGGER.info("[Chronicler/Groq] Shutting down.");
     }
 
     public static void initialize() {
         String apiKey = GroqConfig.GROQ_API_KEY.get();
 
         if (apiKey == null || apiKey.isBlank()) {
-            LOGGER.warn("[Groq] No API key configured. Set groq.apiKey in your config. AI features disabled.");
+            LOGGER.warn("[Chronicler/Groq] No API key configured. Set groq.apiKey in your config. AI features disabled.");
             available = false;
             return;
         }
 
-        LOGGER.info("[Groq] API key found. Testing connectivity...");
+        LOGGER.info("[Chronicler/Groq] API key found. Testing connectivity...");
 
         try {
             String result = GroqClient.generate("Say 'OK' and nothing else.");
-            LOGGER.info("[Groq] Connectivity test passed. Response: {}", result.trim());
+            LOGGER.info("[Chronicler/Groq] Connectivity test passed. Response: {}", result.trim());
             available = true;
-            LOGGER.info("[Groq] Ready. Model: {}", GroqConfig.GROQ_MODEL.get());
+            LOGGER.info("[Chronicler/Groq] Ready. Model: {}", GroqConfig.GROQ_MODEL.get());
         } catch (Exception e) {
             available = false;
-            LOGGER.error("[Groq] Connectivity test failed: {}", e.getMessage());
+            LOGGER.error("[Chronicler/Groq] Connectivity test failed: {}", e.getMessage());
         }
     }
 }

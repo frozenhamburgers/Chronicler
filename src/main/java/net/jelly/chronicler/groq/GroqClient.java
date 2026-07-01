@@ -50,7 +50,7 @@ public class GroqClient {
                         "\r\n" +
                         bodyStr;
 
-        LOGGER.debug("[Groq] Sending request to {}", HOST);
+        LOGGER.debug("[Chronicler/Groq] Sending request to {}", HOST);
 
         // Use SSL socket since Groq is HTTPS only
         SSLSocketFactory factory = (SSLSocketFactory) SSLSocketFactory.getDefault();
@@ -70,12 +70,12 @@ public class GroqClient {
 
             // Read status line
             String statusLine = reader.readLine();
-            LOGGER.debug("[Groq] Status: {}", statusLine);
+            LOGGER.debug("[Chronicler/Groq] Status: {}", statusLine);
 
             // Read and skip headers
             String line;
             while ((line = reader.readLine()) != null && !line.isEmpty()) {
-                LOGGER.debug("[Groq] Header: {}", line);
+                LOGGER.debug("[Chronicler/Groq] Header: {}", line);
             }
 
             // Read body
@@ -85,7 +85,7 @@ public class GroqClient {
             }
 
             String responseBody = sb.toString();
-            LOGGER.debug("[Groq] Raw response: {}", responseBody);
+            LOGGER.debug("[Chronicler/Groq] Raw response: {}", responseBody);
 
             // Check for HTTP error
             if (statusLine != null && !statusLine.contains("200")) {

@@ -8,6 +8,7 @@ import com.jelly.dialog_lib.client.screen.builder.StreamDialogueScreenBuilder;
 import net.jelly.chronicler.ChroniclerMod;
 import net.jelly.chronicler.network.ChroniclerPacketHandler;
 import net.jelly.chronicler.network.ChroniclerPacketRelay;
+import net.jelly.chronicler.network.packet.serverbound.SendGroqQueryPacket;
 import net.jelly.chronicler.network.packet.serverbound.SendTextInputPacket;
 import net.jelly.chronicler.network.packet.serverbound.TestPacket;
 import net.minecraft.client.player.LocalPlayer;
@@ -70,11 +71,9 @@ public class VillagerDialogExtension implements IEntityDialogueExtension<Village
                             Component.literal("Enter input..."),
                             // when using LoopingTextInput, it makes most sense in this situation to entirely delegate the reply to the callback.
                             (text, screen) -> {
-
-                                System.out.println("Client: Sending packet");
                                 screen.setBlocked(true);
                                 screen.setDialogueAnswer(Component.literal("..."));
-                                ChroniclerPacketRelay.sendToServer(new SendTextInputPacket(text));
+                                ChroniclerPacketRelay.sendToServer(new SendGroqQueryPacket(text));
 
                                 if(text.equals(localPlayer.getDisplayName().getString())) {
                                     if (screen instanceof TextInputDialogueScreen tiScreen) {

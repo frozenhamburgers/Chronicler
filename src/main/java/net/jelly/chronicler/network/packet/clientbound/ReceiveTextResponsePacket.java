@@ -7,6 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
+// General clientbound packet to set dialogue reply
 public record ReceiveTextResponsePacket(String text) implements BasePacket {
 
     @Override

@@ -38,11 +38,11 @@ public class GroqCommand {
 
         if (!GroqManager.isAvailable()) {
             source.sendFailure(Component.literal(
-                    "[Groq] AI is not available. Check that groq.apiKey is set in your config."));
+                    "[Chronicler/Groq] AI is not available. Check that groq.apiKey is set in your config."));
             return 0;
         }
 
-        source.sendSuccess(() -> Component.literal("[Groq] Querying..."), false);
+        source.sendSuccess(() -> Component.literal("[Chronicler/Groq] Querying..."), false);
 
         CompletableFuture.supplyAsync(() -> {
             try {
@@ -52,7 +52,7 @@ public class GroqCommand {
             }
         }).thenAccept(result -> {
             ServerLifecycleHooks.getCurrentServer().execute(() -> {
-                source.sendSuccess(() -> Component.literal("[Groq] " + result), false);
+                source.sendSuccess(() -> Component.literal("[Chronicler/Groq] " + result), false);
             });
         });
 

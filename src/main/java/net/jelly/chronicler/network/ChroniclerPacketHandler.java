@@ -3,6 +3,7 @@ package net.jelly.chronicler.network;
 import net.jelly.chronicler.ChroniclerMod;
 import net.jelly.chronicler.network.packet.BasePacket;
 import net.jelly.chronicler.network.packet.clientbound.ReceiveTextResponsePacket;
+import net.jelly.chronicler.network.packet.serverbound.SendGroqQueryPacket;
 import net.jelly.chronicler.network.packet.serverbound.SendTextInputPacket;
 import net.jelly.chronicler.network.packet.serverbound.TestPacket;
 import net.minecraft.network.FriendlyByteBuf;
@@ -27,7 +28,11 @@ public class ChroniclerPacketHandler {
 
     public static synchronized void register() {
         register(TestPacket.class, TestPacket::decode);
+
         register(SendTextInputPacket.class, SendTextInputPacket::decode);
+        register(SendGroqQueryPacket.class, SendGroqQueryPacket::decode);
+
         register(ReceiveTextResponsePacket.class, ReceiveTextResponsePacket::decode);
+
     }
 }
