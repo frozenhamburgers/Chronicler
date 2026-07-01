@@ -73,7 +73,7 @@ public class VillagerDialogExtension implements IEntityDialogueExtension<Village
                             (text, screen) -> {
                                 screen.setBlocked(true);
                                 screen.setDialogueAnswer(Component.literal("..."));
-                                ChroniclerPacketRelay.sendToServer(new SendGroqQueryPacket(text));
+                                ChroniclerPacketRelay.sendToServer(new SendGroqQueryPacket(text, screen.getSessionId()));
 
                                 if(text.equals(localPlayer.getDisplayName().getString())) {
                                     if (screen instanceof TextInputDialogueScreen tiScreen) {

@@ -7,15 +7,16 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 
-public record SendTextInputPacket(String text) implements BasePacket {
+public record SendTextInputPacket(String text, java.util.UUID sessionId) implements BasePacket {
 
     @Override
     public void encode(FriendlyByteBuf buf) {
         buf.writeUtf(this.text());
+        buf.writeUUID(this.sessionId());
     }
 
     public static SendTextInputPacket decode(FriendlyByteBuf buf) {
-        return new SendTextInputPacket(buf.readUtf());
+        return new SendTextInputPacket(buf.readUtf(), buf.readUUID());
     }
 
     @Override
@@ -23,7 +24,7 @@ public record SendTextInputPacket(String text) implements BasePacket {
         if (player instanceof ServerPlayer serverPlayer) {
             // echo back to client
             ChroniclerPacketRelay.sendToPlayer(
-                    new ReceiveTextResponsePacket(text),
+                    new ReceiveTextResponsePacket(text, sessionId),
                     serverPlayer
             );
         }

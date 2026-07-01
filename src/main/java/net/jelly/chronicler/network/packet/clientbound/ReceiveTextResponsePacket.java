@@ -8,22 +8,24 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
 // General clientbound packet to set dialogue reply
-public record ReceiveTextResponsePacket(String text) implements BasePacket {
+public record ReceiveTextResponsePacket(String text, java.util.UUID sessionId) implements BasePacket {
 
     @Override
     public void encode(FriendlyByteBuf buf) {
         buf.writeUtf(this.text());
+        buf.writeUUID(this.sessionId());
     }
 
     public static ReceiveTextResponsePacket decode(FriendlyByteBuf buf) {
-        return new ReceiveTextResponsePacket(buf.readUtf());
+        return new ReceiveTextResponsePacket(buf.readUtf(), buf.readUUID());
     }
 
     @Override
     public void execute(Player player) {
         Minecraft.getInstance().execute(() -> {
             Screen current = Minecraft.getInstance().screen;
-            if (current instanceof DialogueScreen dialogueScreen) {
+            if (current instanceof DialogueScreen dialogueScreen
+                    && dialogueScreen.getSessionId().equals(sessionId)) {
                 dialogueScreen.setBlocked(false);
                 dialogueScreen.setDialogueAnswer(Component.literal(text));
             }

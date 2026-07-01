@@ -12,15 +12,16 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 
 ;import java.util.concurrent.CompletableFuture;
 
-public record SendGroqQueryPacket(String text) implements BasePacket {
+public record SendGroqQueryPacket(String text, java.util.UUID sessionId) implements BasePacket {
 
     @Override
     public void encode(FriendlyByteBuf buf) {
         buf.writeUtf(this.text());
+        buf.writeUUID(this.sessionId());
     }
 
     public static SendGroqQueryPacket decode(FriendlyByteBuf buf) {
-        return new SendGroqQueryPacket(buf.readUtf());
+        return new SendGroqQueryPacket(buf.readUtf(), buf.readUUID());
     }
 
     @Override
@@ -32,7 +33,8 @@ public record SendGroqQueryPacket(String text) implements BasePacket {
         if (!GroqManager.isAvailable()) {
             ChroniclerPacketRelay.sendToPlayer(
                     new ReceiveTextResponsePacket(
-                            "[Chronicler/Groq] AI is not available. Check that groq.apiKey is set in your config."
+                            "[Chronicler/Groq] AI is not available. Check that groq.apiKey is set in your config.",
+                            sessionId
                     ),
                     serverPlayer
             );
@@ -51,7 +53,7 @@ public record SendGroqQueryPacket(String text) implements BasePacket {
             ServerLifecycleHooks.getCurrentServer().execute(() -> {
 
                 ChroniclerPacketRelay.sendToPlayer(
-                        new ReceiveTextResponsePacket(result),
+                        new ReceiveTextResponsePacket(result, sessionId),
                         serverPlayer
                 );
             });
