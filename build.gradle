@@ -147,22 +147,18 @@ repositories {
     }
 }
 
+jarJar.enable()
 dependencies {
-    // Specify the version of Minecraft to use.
-    // Any artifact can be supplied so long as it has a "userdev" classifier artifact and is a compatible patcher artifact.
-    // The "userdev" classifier will be requested and setup by ForgeGradle.
-    // If the group id is "net.minecraft" and the artifact id is one of ["client", "server", "joined"],
-    // then special handling is done to allow a setup of a vanilla dependency without the use of an external repository.
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-//    implementation files("build/libs/original.jar")
     implementation fg.deobf("com.jelly:p1nero-dialogue-lib-jellycarbonara-fork:2.3.0-mc1.20.1-forge")
-//    implementation fg.deobf("curse.maven:p1neros-dialogue-lib-text-options-1587551:8317840")
-//    implementation fg.deobf("curse.maven:p1neros-dialogue-lib-1274526:7706756")
-    // For more info:
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-    // Apply Mixin AP
+
+    minecraftLibrary 'com.h2database:h2:2.2.224'
+
+    jarJar(group: 'com.h2database', name: 'h2', version: '[2.2.224,)') {
+        jarJar.pin(it, '2.2.224')
+    }
+
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 

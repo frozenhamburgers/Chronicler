@@ -3,6 +3,7 @@ package net.jelly.chronicler.groq;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.jelly.chronicler.ChroniclerMod;
+import net.jelly.chronicler.backend.graph.debug.GraphTestCommand;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
